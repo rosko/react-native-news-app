@@ -10,27 +10,87 @@ var {
   StyleSheet,
   Text,
   View,
+  Navigator,
   ToolbarAndroid,
   } = React;
 const { appTitle } = require('./config');
 const MainCanvas = require('./MainCanvas');
+const ReadingPane = require('./ReadingPane');
 
-var NewsApp = React.createClass({
-  handlePressMenuIcon() {
-    this.refs['mainCanvas'].toggleDrawer();
-  },
+const Scene = React.createClass({
 
-  render: function() {
+  renderMainCanvas() {
     return (
       <View style={{flex:1}}>
         <ToolbarAndroid
           style={styles.toolbar}
           navIcon={require('./assets/icon-menu-android.png')}
-          onIconClicked={this.handlePressMenuIcon}
+          onIconClicked={() => {
+            this.refs['mainCanvas'].toggleDrawer();
+          }}
           title={appTitle}
           />
-        <MainCanvas ref='mainCanvas' />
+        <MainCanvas
+          ref='mainCanvas'
+          onPressArticle={this.props.onPressArticle}
+          />
       </View>
+    );
+  },
+
+  renderReadingPane() {
+    let { route } = this.props;
+
+    return (
+      <View style={{flex:1}}>
+        <ToolbarAndroid
+          style={styles.toolbar}
+          navIcon={require('./assets/icon-back-android.png')}
+          onIconClicked={this.props.onBack}
+          title={appTitle}
+          />
+        <ReadingPane article={route.article} />
+      </View>
+    );
+  },
+
+  render(){
+    let { type } = this.props;
+    if (type === 'readingPane') {
+      return this.renderReadingPane()
+    } else {
+      return this.renderMainCanvas()
+    }
+  }
+});
+
+var NewsApp = React.createClass({
+
+  render: function() {
+    return (
+      <Navigator
+        initialRoute={{type: 'mainCanvas', index: 0}}
+        renderScene={(route, navigator) =>
+          <Scene
+            type={route.type}
+            route={route}
+            onPressArticle={(article) => {
+              var nextIndex = route.index + 1;
+              navigator.push({
+                type: 'readingPane',
+                article,
+                index: nextIndex
+              });
+            }}
+            onBack={() => {
+              if (route.index > 0) {
+                navigator.pop();
+              }
+            }}
+          />
+        }
+        />
+
     );
   }
 });

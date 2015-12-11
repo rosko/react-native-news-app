@@ -7,8 +7,9 @@
   },
   "dependencies": {
     "lodash": "3.10.1",
-    "moment": "^2.10.6",
+    "moment": "2.10.6",
     "react-native": "0.16.0",
-    "react-native-drawer-layout": "github:rosko/react-native-drawer-layout"
+    "react-native-drawer-layout": "github:rosko/react-native-drawer-layout",
+    "react-native-webview-android": "1.0.11"
   }
 }

@@ -24,8 +24,8 @@ const Sidebar = React.createClass({
     }
   },
 
-  handlePressChannel(channelID) {
-    this.props.onPressChannel && this.props.onPressChannel(channelID);
+  handlePressChannel(channel) {
+    this.props.onPressChannel && this.props.onPressChannel(channel);
   },
 
   componentDidMount() {
@@ -45,7 +45,7 @@ const Sidebar = React.createClass({
     return (
       <TouchableOpacity
         activeOpacity={0.5}
-        onPress={this.handlePressChannel.bind(this, id)}
+        onPress={this.handlePressChannel.bind(this, channel)}
         style={styles.channel}
         >
         <Text style={styles.title}>{title}</Text>
@@ -80,7 +80,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   title: {
-    fontSize: 14,
-    textAlign: 'left'
+    fontSize: 16,
+    textAlign: 'left',
+    color: 'rgba(0,0,0,0.9)'
   }
 });

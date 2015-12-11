@@ -9,6 +9,7 @@ const {
   Image,
   ListView,
   Platform,
+  TouchableOpacity,
   ActivityIndicatorIOS,
   StatusBarIOS
   } = React;
@@ -44,7 +45,6 @@ const MainCanvas = React.createClass({
     this.refs.drawer.closeDrawer();
   },
 
-
   toggleDrawer() {
     if (this._drawerOpened) {
       this.refs['drawer'].closeDrawer();
@@ -55,15 +55,24 @@ const MainCanvas = React.createClass({
 
   // handlers
 
-  handlePressChannel(channelID) {
-    this.loadChannel(channelID);
+  handlePressChannel(channel) {
+    this.channel = channel;
+    this.loadChannel(channel.id);
+  },
+
+  handlePressArticle(article) {
+    this.props.onPressArticle && this.props.onPressArticle(article, this.channel.title);
   },
 
   // lifecycle
 
   componentDidMount() {
+    this.channel = {};
     content.loadOnlyChannelsList()
-      .then(channels => this.loadChannel(channels[0].id))
+      .then(channels => {
+        this.channel = channels[0];
+        this.loadChannel(channels[0].id)
+      })
       .catch(e => console.error(e));
     this.props.onMount && this.props.onMount(this);
   },
@@ -75,18 +84,23 @@ const MainCanvas = React.createClass({
     createdDate = moment(createdDate).format('MMM D, hh:mma');
     let imageURL = ((((images || [])[0] || {}).ImageLinks || [])[0] || {}).Url;
     return (
-      <View style={styles.item} key={id}>
-        <View style={styles.itemThumbnailWrapper}>
-          <Image
-            source={{uri: imageURL}}
-            style={styles.itemThumbnail}
-            />
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={this.handlePressArticle.bind(this, item)}
+        key={id}>
+        <View style={styles.item} >
+          <View style={styles.itemThumbnailWrapper}>
+            <Image
+              source={{uri: imageURL}}
+              style={styles.itemThumbnail}
+              />
+          </View>
+          <View style={styles.itemText}>
+            <Text style={styles.itemTitle}>{title}</Text>
+            <Text style={styles.itemDate}>{createdDate}</Text>
+          </View>
         </View>
-        <View style={styles.itemText}>
-          <Text style={styles.itemTitle}>{title}</Text>
-          <Text style={styles.itemDate}>{createdDate}</Text>
-        </View>
-      </View>
+      </TouchableOpacity>
     );
   },
 
@@ -114,7 +128,9 @@ const MainCanvas = React.createClass({
 
   render() {
     let { loading } = this.state;
-    console.log(loading);
+    let { channel } = this;
+    channel = channel || {};
+
     return (
       <DrawerLayout
         ref='drawer'
@@ -130,9 +146,13 @@ const MainCanvas = React.createClass({
         <View style={[styles.spinner, loading ? styles.spinnerLoading : styles.spinnerLoaded]}>
           {loading && this.renderSpinner()}
         </View>
+
         <ListView
           dataSource={this.state.items}
           initialListSize={10}
+          renderHeader={() => <View style={styles.header}>
+            <Text style={styles.channelTitle}>{channel.title}</Text>
+          </View>}
           renderRow={this.renderItem}
           />
       </DrawerLayout>
@@ -169,6 +189,15 @@ const styles = StyleSheet.create({
   itemDate: {
     textAlign: 'left',
     color: 'grey'
+  },
+  header: {
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  channelTitle: {
+    fontSize: 16,
+    margin: 10,
+    color: 'rgb(255,255,255)',
+    textAlign: 'left'
   },
 
   spinner: {
