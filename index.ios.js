@@ -7,47 +7,33 @@
 var React = require('react-native');
 var {
   AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;
+  NavigatorIOS
+  } = React;
+const { appTitle } = require('./config');
+const MainCanvas = require('./MainCanvas');
 
 var NewsApp = React.createClass({
-  render: function() {
+
+  handlePressMenuIcon() {
+    this.mainCanvas && this.mainCanvas.toggleDrawer();
+  },
+
+  render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+      <NavigatorIOS
+        style={{flex:1}}
+        initialRoute={{
+          component: MainCanvas,
+          title: appTitle,
+          passProps: { onMount: (mainCanvas) => {
+             this.mainCanvas = mainCanvas;
+          }},
+          leftButtonIcon: require('./assets/icon-menu-ios.png'),
+          onLeftButtonPress: this.handlePressMenuIcon
+        }}
+        />
     );
   }
-});
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
 });
 
 AppRegistry.registerComponent('NewsApp', () => NewsApp);

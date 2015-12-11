@@ -10,43 +10,37 @@ var {
   StyleSheet,
   Text,
   View,
-} = React;
+  ToolbarAndroid,
+  } = React;
+const { appTitle } = require('./config');
+const MainCanvas = require('./MainCanvas');
 
 var NewsApp = React.createClass({
+  handlePressMenuIcon() {
+    this.refs['mainCanvas'].toggleDrawer();
+  },
+
   render: function() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
+      <View style={{flex:1}}>
+        <ToolbarAndroid
+          style={styles.toolbar}
+          navIcon={require('./assets/icon-menu-android.png')}
+          onIconClicked={this.handlePressMenuIcon}
+          title={appTitle}
+          />
+        <MainCanvas ref='mainCanvas' />
       </View>
     );
   }
 });
 
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+const styles = StyleSheet.create({
+  toolbar: {
+    height: 52,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray'
+  }
 });
 
 AppRegistry.registerComponent('NewsApp', () => NewsApp);
