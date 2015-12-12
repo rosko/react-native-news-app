@@ -1,7 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+// run next to create production bundle
+// react-native bundle --dev false --minify --platform ios --bundle-output ios/main.jsbundle --entry-file index.ios.js
+
 'use strict';
 
 var React = require('react-native');
